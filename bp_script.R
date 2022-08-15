@@ -160,37 +160,8 @@ scatter_percent <- ggplot(energy_df_indexed %>%
         panel.background = element_blank())
 
 scatter_percent
-# 
-# 
-# # With indexed change renewables
-# scatter_index <- ggplot(energy_df_indexed %>%
-#                     left_join(hdi)%>%
-#                     filter(Year == 2021,
-#                            # renewables_ej > 0,
-#                            percent_renew_indexed < 6000,
-#                            !grepl("Total", Country),
-#                            !grepl("Other", Country)),
-#                   aes(x = percent_renew_indexed,
-#                       y = primary_pc_indexed,
-#                       colour = hdi_2019,
-#                       label = Country,
-#                       size = primary_ej)) +
-#   geom_point() +
-#   scale_size(range = c(1, 15), name="total consumption") +
-#   scale_colour_viridis_c() +
-#   geom_hline(yintercept = 100) +
-#   geom_text(colour = "black", size = 2)  +
-#   labs(title = "Fossils are still fuelling human development",
-#        subtitle = "Energy consumption growth is concentrated in the developing world,
-#        where the transition to renewables is progressing more slowly",
-#        x = "% growth in proportion of energy from renewables",
-#        y = "% change in per capital energy consumption since 2015")
-# 
-# scatter_index
-# 
-# 
 
-# Emissions
+#Emissions
 
 consolidated_filtered$Var <- factor(consolidated_filtered$Var , levels=c("co2_combust_pc", "co2_combust_per_ej", "co2_combust_mtco2"))
 
@@ -221,7 +192,7 @@ Emissions
 
 
 
-# How much renewable capacity have countries added? Keep it to since 2015. renewable generation in 2015 and 2021, difference. 
+# How much renewable capacity have countries added since 2015. 
 
 growth_renewables <- energy_df_indexed %>%
   select(Country, Year, renewables_ej) %>%
@@ -271,7 +242,7 @@ biggest_adders
 
 
 
-# `How many Terawatt Hours are in a Exajoule? The answer is one Exajoule is equal to 277.78 Terawatt Hours.`Ren_power is generation, renewables_ej is consumption
+# One Exajoule is equal to 277.78 Terawatt Hours.`Ren_power is generation, renewables_ej is consumption
 
 
 consolidated_filtered_for_generation <- consolidated %>%
@@ -280,6 +251,7 @@ consolidated_filtered_for_generation <- consolidated %>%
   rename(iso3 = ISO3166_alpha3) %>%
   left_join(hdi) %>%
   select(!country)
+
 
 for_renew_growth <- c( "Vietnam",
                        "Uzbekistan",
@@ -291,20 +263,14 @@ for_renew_growth <- c( "Vietnam",
 )
 
 
-IEA_test <- c( "China",
-               "US",
-               "EU",
-               "India",
-               "Total Europe"
-)
 
-these_ones <- c("Morocco", "Iran","Algeria", 
+actually_these_ones <- c("Morocco", "Iran","Algeria", 
                 "Sri Lanka",
                 "Philippines")
 
 growth_renewable_gen <- consolidated_filtered_for_generation %>%
   select(!c(iso3, Region, SubRegion, hdicode, hdi_2019)) %>%
-  filter(Country %in% these_ones,
+  filter(Country %in% actually_these_ones,
          Year >= 2015) %>%
   pivot_wider(names_from = Var, values_from = Value) %>%
   mutate(wind_sol = solar_twh + wind_twh,
